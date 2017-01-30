@@ -17,7 +17,7 @@ var to = function(n, length) {
 };
 
 exports.toN = function(number, length) {
-    return to(toBuffer(number), length / 8);
+    return to(toBuffer(number), length);
 };
 
 exports.toBigInteger = function(bufferObj) {

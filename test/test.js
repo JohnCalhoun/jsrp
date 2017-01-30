@@ -1,8 +1,7 @@
 var require_helper=require('./require_helper.js')
-var constants=require('./constants.json')
 var BigInteger = require('jsbn').BigInteger;
 var crypto=require('crypto')
-var bitlength=1024*8
+var bitlength=2048
 var SRP=require_helper('srp.js')('modp18',bitlength)
 
 var SRPClient = require_helper('client.js')('modp18',bitlength);
@@ -17,7 +16,7 @@ module.exports={
             test.expect(1)
              
             var bi=new BigInteger('100')
-            var result=util.toN(bi,length*8)
+            var result=util.toN(bi,length)
             
             test.equal(result.length,length)
             test.done()
