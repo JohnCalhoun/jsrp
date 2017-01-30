@@ -194,16 +194,16 @@ module.exports={
             verifier.salt
         )
         test.equal(
-            clientKey.toString('hex'),
-            common.toString('hex')
+            clientKey,
+            common
         )
         test.equal(
-            serverMaterial.key.toString('hex'),
-            common.toString('hex')
+            serverMaterial.key,
+            common
         )
         test.equal(
-            serverMaterial.key.toString('hex'),
-            clientKey.toString('hex')
+            serverMaterial.key,
+            clientKey
         )
 
         test.done()

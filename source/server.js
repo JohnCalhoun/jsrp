@@ -11,7 +11,7 @@ module.exports=function(group,keylength){
             verifier
         ) 
 
-        return {key:key,B:Bs.B,b:Bs.b}
+        return {key:srp.K(key),B:Bs.B,b:Bs.b}
     }
 
     return out

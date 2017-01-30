@@ -14,7 +14,8 @@ module.exports=function(group,keylength){
         return srp.A(32)  
     }
     out.getShared=function(A,B,a,I,P,s){
-        return srp.clientS(A,B,a,I,P,s)
+        var key=srp.clientS(A,B,a,I,P,s)
+        return srp.K(key)
     }
 
     return out

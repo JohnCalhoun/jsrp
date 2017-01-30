@@ -84,11 +84,14 @@ SRP.serverS = function(A,B,b,v) {
     }
 };
 
+SRP.K=function(key){
+    return util.hash(key.toString('hex'),hash_type).toString('hex')
+}
 SRP.debug=function(A,B,a,b,I,P,s){
     var u=SRP.u(A,B)
     var x=SRP.x(I,P,s)
 
-    return util.toN(g.modPow(b,N).modPow(a.add(u.multiply(x)),N),length)
+    return SRP.K(util.toN(g.modPow(b,N).modPow(a.add(u.multiply(x)),N),length))
 }
 module.exports=function(group,keylength){
     var dh=crypto.getDiffieHellman(group)
