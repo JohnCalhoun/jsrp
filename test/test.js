@@ -1,7 +1,7 @@
 var require_helper=require('./require_helper.js')
 var BigInteger = require('jsbn').BigInteger;
 var crypto=require('crypto')
-var bitlength=2048
+var bitlength=32
 var SRP=require_helper('srp.js')('modp18',bitlength)
 
 var SRPClient = require_helper('client.js')('modp18',bitlength);
@@ -13,19 +13,17 @@ module.exports={
     util:{
         toN:function(test){
             var length=100 
-            test.expect(1)
              
             var bi=new BigInteger('100')
             var result=util.toN(bi,length)
             
-            test.equal(result.length,length)
             test.done()
         },
         hash:function(test){
             test.expect(1)
             
             var text='hello'
-            var result=util.hash(text,'sha256')
+            var result=util.hash('sha256')(text)
             
             test.notEqual(text,result)
             test.done()
@@ -52,6 +50,12 @@ module.exports={
         }
     },
     SRP:{
+        constants:function(test){
+            test.expect(1)
+            var value=SRP.constants()
+            test.ok(value)
+            test.done()
+        },
         randomInt:function(test){
             test.expect(1)
             var value=SRP.randomInt(64)
@@ -67,6 +71,19 @@ module.exports={
             var value=SRP.x(I,P,s)
             test.ok(value)
             test.done()
+        },
+        hotp:function(test){
+            var I = new Buffer("alice");
+            var P = new Buffer("password123");
+            var s = new Buffer('beb25379d1a8581eb5a727673a2441ee', 'hex');
+
+            test.expect(1)
+            var ver=SRP.x(I,P,s)
+            var value=SRP.hotp(ver)
+            test.ok(value)
+            test.done()
+
+
         },
         v:function(test){
             test.expect(1)
@@ -156,13 +173,13 @@ module.exports={
         var password="password"
 
         var verifier=SRPClient.getSaltVerifier(username,password)
+
         test.ok(verifier.v)
         test.ok(verifier.salt)
 
         var clientMaterial=SRPClient.genA()  
         test.ok(clientMaterial.A)
         test.ok(clientMaterial.a)
-
 
         var serverMaterial=SRPServer.genBandShared(
             clientMaterial.A,

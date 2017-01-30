@@ -1,9 +1,9 @@
 module.exports=function(group,keylength){
-    var srp=require('./srp.js')(group,keylength)
+    var srp=require('./srp.js')(group,keylength,64)
     var out={}
     
     out.genBandShared=function(A,salt,verifier){
-        var Bs=srp.B(verifier,32)
+        var Bs=srp.B(verifier)
         var key=srp.serverS(
             A,
             Bs.B,
