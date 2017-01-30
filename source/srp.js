@@ -1,13 +1,17 @@
 var randomBytes = require('randombytes');
 var BigInteger = require('jsbn').BigInteger;
 var util=require('./util.js')
-var crypto=require('crypto')
 var SRP={}
 
 var hash_type='sha256'
 var length
 var g
 var N
+
+var passwordHash=util.hash(hash_type)
+var keyHash=util.hash(hash_type)
+var scrambleHash=util.hash(hash_type)
+var publicHash=util.hash(hash_type)
 
 SRP.randomInt=function(size) {
     return util.toBigInteger(randomBytes(size))
@@ -18,8 +22,8 @@ SRP.generateSalt=function(size) {
 };
 
 SRP.x = function(I,P,salt) {
-    var identifierPasswordHash = util.hash(I+':'+P,hash_type);
-    var xHash=util.hash(salt+identifierPasswordHash,hash_type);
+    var identifierPasswordHash = passwordHash(I+':'+P);
+    var xHash=passwordHash(salt+identifierPasswordHash);
     
     var result = util.toBigInteger(xHash);
     return result;
@@ -39,7 +43,7 @@ SRP.A = function(size) {
 };
 
 SRP.k = function() {
-    result = util.hash(util.toN(N, length)+util.toN(g, length),hash_type);
+    result = scrambleHash(util.toN(N, length)+util.toN(g, length));
     return util.toBigInteger(result);
 };
 
@@ -54,9 +58,8 @@ SRP.B = function(v,size) {
 
 SRP.u = function(A,B) {
     return util.toBigInteger(
-        util.hash(
-            A.toString('hex')+B.toString('hex'),
-            hash_type
+        publicHash(
+            A.toString('hex')+B.toString('hex')
         )
     );
 };
@@ -85,7 +88,7 @@ SRP.serverS = function(A,B,b,v) {
 };
 
 SRP.K=function(key){
-    return util.hash(key.toString('hex'),hash_type).toString('hex')
+    return keyHash(key.toString('hex')).toString('hex')
 }
 SRP.debug=function(A,B,a,b,I,P,s){
     var u=SRP.u(A,B)
@@ -94,7 +97,7 @@ SRP.debug=function(A,B,a,b,I,P,s){
     return SRP.K(util.toN(g.modPow(b,N).modPow(a.add(u.multiply(x)),N),length))
 }
 module.exports=function(group,keylength){
-    var dh=crypto.getDiffieHellman(group)
+    var dh=require('crypto').getDiffieHellman(group)
     g=util.toBigInteger(dh.getGenerator())
     N=util.toBigInteger(dh.getPrime())
     length=keylength     

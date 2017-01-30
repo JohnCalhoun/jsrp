@@ -24,14 +24,13 @@ exports.toBigInteger = function(bufferObj) {
     return new BigInteger(bufferObj.toString('hex'), 16);
 };
 
-exports.hash=function(text,type){
-    return createHash(type)
-        .update(text)
-        .digest()
+exports.hash=function(type){
+    return function(text){
+        return createHash(type)
+            .update(text)
+            .digest()
+    }
 }
-
-exports.passwordHash=exports.hash
-exports.keyHash=exports.hash
 
 
 
